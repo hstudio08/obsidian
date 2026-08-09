@@ -49,3 +49,9 @@ self.addEventListener('notificationclick', (event) => {
     })
   );
 });
+
+// A simple fetch handler is required by Chrome to recognize the PWA as installable
+self.addEventListener('fetch', (event) => {
+  // Let the browser do its default thing for now
+  // In a full PWA, we might want to cache requests here
+});
