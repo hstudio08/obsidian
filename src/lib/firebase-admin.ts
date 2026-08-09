@@ -1,12 +1,15 @@
-import * as admin from 'firebase-admin';
+import { getApps, initializeApp, cert, getApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getMessaging } from 'firebase-admin/messaging';
+import { getAuth } from 'firebase-admin/auth';
 
-if (!admin.apps.length) {
+if (!getApps().length) {
   try {
     const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
     if (serviceAccountKey) {
       const serviceAccount = JSON.parse(serviceAccountKey);
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
+      initializeApp({
+        credential: cert(serviceAccount)
       });
       console.log("Firebase Admin Initialized Successfully");
     } else {
@@ -17,6 +20,6 @@ if (!admin.apps.length) {
   }
 }
 
-export const adminDb = admin.apps.length ? admin.firestore() : null;
-export const adminMessaging = admin.apps.length ? admin.messaging() : null;
-export const adminAuth = admin.apps.length ? admin.auth() : null;
+export const adminDb = getApps().length ? getFirestore(getApp()) : null;
+export const adminMessaging = getApps().length ? getMessaging(getApp()) : null;
+export const adminAuth = getApps().length ? getAuth(getApp()) : null;
