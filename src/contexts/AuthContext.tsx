@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword } from "firebase/auth";
+import { User, onAuthStateChanged, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, onSnapshot, writeBatch, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { UserProfile } from "@/types";
@@ -24,6 +24,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let unsubscribeProfile: () => void;
+
+    // Check for redirect result errors (e.g. user cancelled on mobile)
+    getRedirectResult(auth).catch((error) => {
+      console.error("Error from redirect sign in", error);
+    });
 
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -61,7 +66,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       provider.setCustomParameters({
         prompt: "select_account"
       });
-      await signInWithPopup(auth, provider);
+      
+      // Use redirect on mobile or installed PWA to avoid popup blockers
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+      
+      if (isMobile || isStandalone) {
+        await signInWithRedirect(auth, provider);
+      } else {
+        await signInWithPopup(auth, provider);
+      }
     } catch (error) {
       console.error("Error signing in with Google", error);
       throw error;
