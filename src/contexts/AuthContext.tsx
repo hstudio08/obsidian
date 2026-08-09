@@ -11,7 +11,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   loading: boolean;
   redirectError: string | null;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => Promise<any>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
