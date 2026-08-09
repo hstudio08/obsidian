@@ -38,18 +38,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(currentUser);
       
       if (currentUser) {
-        // Subscribe to user profile
-        unsubscribeProfile = onSnapshot(doc(db, "users", currentUser.uid), async (docSnap) => {
-          if (docSnap.exists()) {
-            setProfile(docSnap.data() as UserProfile);
+        // Fetch profile explicitly to avoid onSnapshot cache false-negatives
+        import('firebase/firestore').then(({ getDoc, doc }) => {
+          getDoc(doc(db, "users", currentUser.uid)).then((docSnap) => {
+            if (docSnap.exists()) {
+              setProfile(docSnap.data() as UserProfile);
+            } else {
+              setProfile(null); // Needs onboarding
+            }
             setLoading(false);
-          } else {
-            setProfile(null); // Needs onboarding
+
+            // Set up snapshot listener for future updates
+            unsubscribeProfile = onSnapshot(doc(db, "users", currentUser.uid), (snap) => {
+              if (snap.exists()) {
+                setProfile(snap.data() as UserProfile);
+              }
+            });
+          }).catch((error) => {
+            console.error("Error fetching profile", error);
             setLoading(false);
-          }
-        }, (error) => {
-          console.error("Error fetching profile", error);
-          setLoading(false);
+          });
         });
 
         // Request FCM Token if permission is granted
