@@ -14,6 +14,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<any>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  requestNotificationPermission: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,7 +58,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             import('firebase/messaging').then(({ getMessaging, getToken }) => {
               try {
                 const messaging = getMessaging(auth.app);
-                getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY })
+                const swUrl = `/firebase-messaging-sw.js?apiKey=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}&authDomain=${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}&projectId=${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}&storageBucket=${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}&messagingSenderId=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}&appId=${process.env.NEXT_PUBLIC_FIREBASE_APP_ID}`;
+                
+                navigator.serviceWorker.register(swUrl)
+                  .then((registration) => {
+                    return getToken(messaging, { 
+                      vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+                      serviceWorkerRegistration: registration
+                    });
+                  })
                   .then((token) => {
                     if (token) {
                       import('firebase/firestore').then(({ setDoc, arrayUnion }) => {
@@ -114,8 +123,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const requestNotificationPermission = async () => {
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted' && user) {
+        import('firebase/messaging').then(({ getMessaging, getToken }) => {
+          const messaging = getMessaging(auth.app);
+          const swUrl = `/firebase-messaging-sw.js?apiKey=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}&authDomain=${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}&projectId=${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}&storageBucket=${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}&messagingSenderId=${process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}&appId=${process.env.NEXT_PUBLIC_FIREBASE_APP_ID}`;
+          
+          navigator.serviceWorker.register(swUrl)
+            .then((registration) => {
+              return getToken(messaging, { 
+                vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
+                serviceWorkerRegistration: registration
+              });
+            })
+            .then((token) => {
+              if (token) {
+                import('firebase/firestore').then(({ setDoc, arrayUnion }) => {
+                  setDoc(doc(db, "users", user.uid), {
+                    fcmTokens: arrayUnion(token)
+                  }, { merge: true }).catch(console.error);
+                });
+              }
+            })
+            .catch((e) => console.log('Failed to get FCM token', e));
+        }).catch(console.error);
+      }
+    } catch (e) {
+      console.error('Error requesting notification permission', e);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, redirectError, signInWithGoogle, signInWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, profile, loading, redirectError, signInWithGoogle, signInWithEmail, logout, requestNotificationPermission }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,7 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 export default function SettingsPage() {
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, requestNotificationPermission } = useAuth();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const toggleHideEmail = async () => {
@@ -65,7 +65,7 @@ export default function SettingsPage() {
 
         {/* Privacy Options */}
         <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider ml-2">Privacy</h3>
+          <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wider ml-2">Privacy & Notifications</h3>
           <div className="bg-surface border border-border rounded-2xl overflow-hidden divide-y divide-border">
             <div className="w-full p-4 flex items-center justify-between hover:bg-surface-hover transition-colors">
               <div className="flex flex-col">
@@ -80,6 +80,28 @@ export default function SettingsPage() {
                 <div className={`w-5 h-5 rounded-full bg-white shadow-sm transform transition-transform ${profile?.hideEmail ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
             </div>
+            <button 
+              onClick={() => {
+                if (typeof window !== 'undefined' && 'Notification' in window) {
+                  if (Notification.permission === 'granted') {
+                    alert('Notifications are already enabled!');
+                  } else if (Notification.permission === 'denied') {
+                    alert('Notifications are blocked by your browser. Please enable them in your browser settings.');
+                  } else {
+                    requestNotificationPermission();
+                  }
+                } else {
+                  alert('Push notifications are not supported in this browser.');
+                }
+              }}
+              className="w-full p-4 flex items-center justify-between hover:bg-surface-hover transition-colors text-left"
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">Enable Notifications</span>
+                <span className="text-xs text-text-muted">Receive push notifications for new messages</span>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-muted"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </button>
           </div>
         </div>
 
