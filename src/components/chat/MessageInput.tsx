@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { sendMessage, setTypingStatus } from "@/lib/chat";
+import { sendMessage, setTypingStatus, editMessage } from "@/lib/chat";
 import { Message } from "@/types";
 
 interface MessageInputProps {
@@ -8,6 +8,8 @@ interface MessageInputProps {
   displayNameToUse: string;
   replyingToMessage: Message | null;
   setReplyingToMessage: (msg: Message | null) => void;
+  editingMessage: Message | null;
+  setEditingMessage: (msg: Message | null) => void;
   memberIds: string[];
 }
 
@@ -23,6 +25,8 @@ export function MessageInput({
   displayNameToUse,
   replyingToMessage,
   setReplyingToMessage,
+  editingMessage,
+  setEditingMessage,
   memberIds
 }: MessageInputProps) {
   const [inputText, setInputText] = useState("");
@@ -32,6 +36,21 @@ export function MessageInput({
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (editingMessage) {
+      setInputText(editingMessage.ciphertext || "");
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.style.height = "24px";
+            textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + "px";
+          }
+        }, 10);
+      }
+    }
+  }, [editingMessage]);
 
   const updateTyping = (typing: boolean) => {
     if (!user) return;
@@ -97,33 +116,38 @@ export function MessageInput({
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     
     try {
-      try {
-        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
-        gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.02);
-        gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
-        osc.start(audioCtx.currentTime);
-        osc.stop(audioCtx.currentTime + 0.1);
-      } catch(e) {}
-      
-      await sendMessage(
-        conversationId, 
-        user.uid, 
-        text, 
-        memberIds, 
-        user.displayName || "User",
-        replyingToMessage ? { id: replyingToMessage.id, text: replyingToMessage.ciphertext || "", senderId: replyingToMessage.senderId } : undefined
-      );
-      setReplyingToMessage(null);
+      if (editingMessage) {
+        await editMessage(conversationId, editingMessage.id, text, user.email || "");
+        setEditingMessage(null);
+      } else {
+        try {
+          const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+          gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+          gainNode.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.02);
+          gainNode.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.1);
+          osc.start(audioCtx.currentTime);
+          osc.stop(audioCtx.currentTime + 0.1);
+        } catch(e) {}
+        
+        await sendMessage(
+          conversationId, 
+          user.uid, 
+          text, 
+          memberIds, 
+          user.displayName || "User",
+          replyingToMessage ? { id: replyingToMessage.id, text: replyingToMessage.ciphertext || "", senderId: replyingToMessage.senderId } : undefined
+        );
+        setReplyingToMessage(null);
+      }
     } catch (err) {
-      console.error("Error sending message", err);
+      console.error("Error sending/editing message", err);
       setInputText(text);
     } finally {
       setIsSending(false);
@@ -132,13 +156,25 @@ export function MessageInput({
 
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md px-4 py-3 pb-safe border-t border-border z-20 flex flex-col">
-      {replyingToMessage && (
+      {replyingToMessage && !editingMessage && (
         <div className="mb-2 bg-surface border-l-4 border-primary-500 rounded-lg p-2.5 flex items-start justify-between shadow-sm self-stretch mx-1">
           <div className="overflow-hidden">
             <div className="font-semibold text-xs text-primary-500 mb-0.5">{replyingToMessage.senderId === user?.uid ? "You" : displayNameToUse}</div>
             <div className="text-sm text-foreground truncate">{replyingToMessage.ciphertext}</div>
           </div>
           <button onClick={() => setReplyingToMessage(null)} className="text-text-muted hover:text-foreground ml-2 flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+      )}
+
+      {editingMessage && (
+        <div className="mb-2 bg-surface border-l-4 border-primary-500 rounded-lg p-2.5 flex items-start justify-between shadow-sm self-stretch mx-1">
+          <div className="overflow-hidden">
+            <div className="font-semibold text-xs text-primary-500 mb-0.5">Editing Message</div>
+            <div className="text-sm text-foreground truncate">{editingMessage.ciphertext}</div>
+          </div>
+          <button onClick={() => { setEditingMessage(null); setInputText(""); }} className="text-text-muted hover:text-foreground ml-2 flex-shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </div>

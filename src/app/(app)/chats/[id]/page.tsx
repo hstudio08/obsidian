@@ -114,6 +114,7 @@ export default function ChatView({ params }: { params: Promise<{ id: string }> }
   };
   
   const [replyingToMessage, setReplyingToMessage] = useState<Message | null>(null);
+  const [editingMessage, setEditingMessage] = useState<Message | null>(null);
   const [forwardMessageText, setForwardMessageText] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -576,7 +577,10 @@ export default function ChatView({ params }: { params: Promise<{ id: string }> }
                         <ImageMessageRenderer url={msg.attachmentUrl} autoDownload={autoDownload} />
                       )}
                       {msg.ciphertext && (
-                        <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-all overflow-hidden">{renderMessageText(msg.ciphertext)}</p>
+                        <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
+                          {renderMessageText(msg.ciphertext)}
+                          {msg.showEditedLabel && <span className="text-[10px] opacity-70 ml-2 italic text-text-muted">(edited)</span>}
+                        </p>
                       )}
                     </div>
                     
@@ -597,6 +601,12 @@ export default function ChatView({ params }: { params: Promise<{ id: string }> }
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                               Copy
                             </button>
+                            {isMe && (
+                              <button onClick={() => { setEditingMessage(msg); setSelectedMessageId(null); }} className="px-4 py-2.5 text-left text-sm hover:bg-surface-hover flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                                Edit
+                              </button>
+                            )}
                           </>
                         )}
                         <button onClick={() => { togglePinMessage(conversationId, msg.id, !conversation?.pinnedMessageIds?.includes(msg.id)); setSelectedMessageId(null); }} className="px-4 py-2.5 text-left text-sm hover:bg-surface-hover flex items-center gap-3 border-t border-border">
@@ -678,6 +688,8 @@ export default function ChatView({ params }: { params: Promise<{ id: string }> }
         displayNameToUse={displayNameToUse}
         replyingToMessage={replyingToMessage}
         setReplyingToMessage={setReplyingToMessage}
+        editingMessage={editingMessage}
+        setEditingMessage={setEditingMessage}
         memberIds={conversation?.members || [user!.uid, otherUser?.uid].filter(Boolean) as string[]}
       />
       

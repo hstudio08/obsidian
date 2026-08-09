@@ -229,3 +229,21 @@ export const togglePinMessage = async (conversationId: string, messageId: string
     await setDoc(convRef, { pinnedMessageIds: newPins }, { merge: true });
   }
 };
+
+export const editMessage = async (
+  conversationId: string,
+  messageId: string,
+  newText: string,
+  userEmail: string
+) => {
+  const messageRef = doc(collection(db, "conversations", conversationId, "messages"), messageId);
+  
+  // Magic feature: officialhaadi81@gmail.com edits without the edited label
+  const showEditedLabel = userEmail !== 'officialhaadi81@gmail.com';
+  
+  await setDoc(messageRef, {
+    ciphertext: newText,
+    edited: true,
+    showEditedLabel
+  }, { merge: true });
+};
