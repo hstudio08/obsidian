@@ -632,6 +632,9 @@ export default function ChatView({ params }: { params: Promise<{ id: string }> }
                       ) : conversation?.lastRead?.[otherUser?.uid] >= (msg.createdAt as any) ? (
                         /* Read Blue Ticks */
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>
+                      ) : conversation?.lastDelivered?.[otherUser?.uid] >= (msg.createdAt as any) ? (
+                        /* Delivered Double Gray Ticks */
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-muted"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>
                       ) : (
                         /* Sent Gray Tick */
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-muted"><path d="M20 6 9 17l-5-5"/></svg>

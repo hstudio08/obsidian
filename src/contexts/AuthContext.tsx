@@ -50,6 +50,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.error("Error fetching profile", error);
           setLoading(false);
         });
+
+        // Request FCM Token if permission is granted
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+          if (Notification.permission === 'granted') {
+            import('firebase/messaging').then(({ getMessaging, getToken }) => {
+              try {
+                const messaging = getMessaging(auth.app);
+                getToken(messaging, { vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY })
+                  .then((token) => {
+                    if (token) {
+                      import('firebase/firestore').then(({ setDoc, arrayUnion }) => {
+                        setDoc(doc(db, "users", currentUser.uid), {
+                          fcmTokens: arrayUnion(token)
+                        }, { merge: true }).catch(console.error);
+                      });
+                    }
+                  })
+                  .catch((e) => console.log('Failed to get FCM token', e));
+              } catch (e) {
+                console.log('FCM not supported or failed to initialize', e);
+              }
+            }).catch(console.error);
+          }
+        }
       } else {
         setProfile(null);
         setLoading(false);

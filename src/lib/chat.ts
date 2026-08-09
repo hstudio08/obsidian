@@ -77,6 +77,22 @@ export const sendMessage = async (
     }
   });
 
+  // Trigger Push Notification in background
+  if (typeof window !== 'undefined') {
+    fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversationId,
+        messageId: messageRef.id,
+        text,
+        senderId,
+        receiverIds: memberIds.filter(id => id !== senderId),
+        senderName: title
+      })
+    }).catch(console.error);
+  }
+
   await batch.commit();
   return messageData;
 };

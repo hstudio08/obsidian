@@ -39,6 +39,7 @@ export interface Conversation {
   // Advanced features
   pinnedMessageIds?: string[];
   lastRead?: Record<string, number>; // uid -> timestamp
+  lastDelivered?: Record<string, number>; // uid -> timestamp
 }
 
 export type MessageStatus = "pending" | "sent" | "delivered" | "read" | "failed";
