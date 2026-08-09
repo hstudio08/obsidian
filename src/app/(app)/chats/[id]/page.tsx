@@ -582,7 +582,7 @@ export default function ChatView({ params }: { params: Promise<{ id: string }> }
                       {msg.ciphertext && (
                         <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
                           {renderMessageText(msg.ciphertext)}
-                          {msg.showEditedLabel && !(isMe ? user?.email === 'officialhaadi81@gmail.com' : (isGroup ? groupMembers.find(m => m.uid === msg.senderId)?.email === 'officialhaadi81@gmail.com' : otherUser?.email === 'officialhaadi81@gmail.com')) && (
+                          {msg.showEditedLabel && !(isMe ? user?.email === 'officialhaadi81@gmail.com' : (isGroup ? groupMembers.find((m: any) => m.uid === msg.senderId)?.email === 'officialhaadi81@gmail.com' : otherUser?.email === 'officialhaadi81@gmail.com')) && (
                             <span className="text-[10px] opacity-70 ml-2 italic text-text-muted">(edited)</span>
                           )}
                         </p>
