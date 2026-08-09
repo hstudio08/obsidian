@@ -23,35 +23,36 @@ export function ChatListItem({ chat, currentUserId }: ChatListItemProps) {
   const [displayName, setDisplayName] = useState<string>(chat.title);
 
   useEffect(() => {
-    async function fetchDetails() {
-      try {
-        if (chat.id.startsWith("direct_")) {
-          const parts = chat.id.replace("direct_", "").split("_");
-          const otherUid = parts[0] === currentUserId ? parts[1] : parts[0];
-          
-          const userDoc = await getDoc(doc(db, "users", otherUid));
+    let unsubscribe = () => {};
+
+    if (chat.id.startsWith("direct_")) {
+      const parts = chat.id.replace("direct_", "").split("_");
+      const otherUid = parts[0] === currentUserId ? parts[1] : parts[0];
+      
+      import("firebase/firestore").then(({ doc, onSnapshot }) => {
+        unsubscribe = onSnapshot(doc(db, "users", otherUid), (userDoc) => {
           if (userDoc.exists()) {
             const data = userDoc.data();
             if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
-            // Only update displayName if we don't have a custom title set in chat.title
-            if (chat.title === "Chat" || chat.title === data.displayName) {
-              setDisplayName(data.displayName || chat.title);
+            if (!chat.title || chat.title === "Chat" || chat.title === data.displayName) {
+              setDisplayName(data.displayName || "Unknown");
             }
           }
-        } else if (chat.id.startsWith("group_")) {
-          const convDoc = await getDoc(doc(db, "conversations", chat.id));
+        });
+      });
+    } else if (chat.id.startsWith("group_")) {
+      import("firebase/firestore").then(({ doc, onSnapshot }) => {
+        unsubscribe = onSnapshot(doc(db, "conversations", chat.id), (convDoc) => {
           if (convDoc.exists()) {
             const data = convDoc.data();
             if (data.avatarUrl) setAvatarUrl(data.avatarUrl);
             if (data.name || data.title) setDisplayName(data.name || data.title);
           }
-        }
-      } catch (e) {
-        console.error("Failed to fetch chat details", e);
-      }
+        });
+      });
     }
-    
-    fetchDetails();
+
+    return () => unsubscribe();
   }, [chat.id, currentUserId, chat.title]);
 
   return (

@@ -179,11 +179,14 @@ export default function ChatView({ params }: { params: Promise<{ id: string }> }
         if (convData.type !== "GROUP") {
           const otherUid = convData.members?.find((id: string) => id !== user.uid);
           if (otherUid) {
-            const userDoc = await getDoc(doc(db, "users", otherUid));
-            if (userDoc.exists()) {
-              setOtherUser(userDoc.data());
-              otherUserRef.current = userDoc.data();
-            }
+            import("firebase/firestore").then(({ onSnapshot }) => {
+              onSnapshot(doc(db, "users", otherUid), (userDoc) => {
+                if (userDoc.exists()) {
+                  setOtherUser(userDoc.data());
+                  otherUserRef.current = userDoc.data();
+                }
+              });
+            });
           }
         } else {
           // Fetch all group members
