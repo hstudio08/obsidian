@@ -1,0 +1,135 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed": "#0b1c30", "error": "#ba1a1a", "surface-variant": "#e4e2e3", "on-primary-fixed": "#141c28", "tertiary-container": "#2c1f0e", "on-tertiary-fixed": "#261909", "surface-container-highest": "#e4e2e3", "surface-container-lowest": "#ffffff", "outline-variant": "#c5c6cc", "secondary-fixed": "#d3e4fe", "on-error-container": "#93000a", "on-tertiary-fixed-variant": "#544430", "background": "#fcf8f9", "on-primary-fixed-variant": "#3f4754", "inverse-on-surface": "#f3f0f1", "inverse-primary": "#bfc7d7", "on-secondary-fixed-variant": "#38485d", "surface-container-low": "#f6f3f4", "surface-container": "#f0edee", "secondary-container": "#d0e1fb", "on-tertiary": "#ffffff", "surface-container-high": "#eae7e8", "on-primary-container": "#818998", "on-primary": "#ffffff", "on-error": "#ffffff", "outline": "#75777c", "primary-fixed": "#dbe3f3", "surface-dim": "#dcd9da", "primary-fixed-dim": "#bfc7d7", "secondary-fixed-dim": "#b7c8e1", "on-surface": "#1b1b1c", "primary-container": "#1a222e", "surface-bright": "#fcf8f9", "surface-tint": "#575f6d", "on-surface-variant": "#45474c", "tertiary-fixed": "#f7dec4", "surface": "#fcf8f9", "on-background": "#1b1b1c", "tertiary-fixed-dim": "#dac3a9", "on-secondary": "#ffffff", "on-secondary-container": "#54647a", "primary": "#040b16", "error-container": "#ffdad6", "tertiary": "#130900", "on-tertiary-container": "#9a856e", "inverse-surface": "#303031", "secondary": "#505f76" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "container-margin": "1rem", "stack-sm": "0.5rem", "message-gap": "0.25rem", "max-width-desktop": "1200px", "gutter": "1rem", "stack-md": "1rem" }, "fontFamily": { "body-md": ["Geist"], "label-caps": ["JetBrains Mono"], "message-text": ["Geist"], "headline-sm": ["Geist"], "body-lg": ["Geist"] }, "fontSize": { "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }], "message-text": ["15px", { "lineHeight": "22px", "fontWeight": "400" }], "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }] } } } }</script><style>@layer base { body { overscroll-behavior: none; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } } .bg-pattern { background-image: url('https://lh3.googleusercontent.com/aida/AP1WRLutJjoQ7YlMQy0y97wJgRFYuz1-hEVrc1Vj10EFMrjuhaYMzx5JLzrnaiYsJ3OZwynZYc5N2auPpp1-tWVCgAHujM5kUcQ-exgZMVgH68fCrfsg8OI5YWCuqrSUib_aFWDKgt0TA7voYYVvu12BWSrxEXa0tzFb1YqnU-tHytKyDqSv4NlIzHO0gPR7NF6r4RNfUM9957zdZop3tkohoiIJLHfNC5Agmx91VboJDGD3zaZ93L-rsNJq_Q'); background-size: 40px 40px; opacity: 0.03; pointer-events: none; position: fixed; inset: 0; z-index: -1; }</style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-background"><div class="bg-pattern"></div><main class="relative min-h-screen"><div class="flex flex-col w-full pb-safe">
+<!-- Group Header -->
+<div class="flex flex-col items-center pt-stack-md pb-stack-md px-gutter bg-surface">
+<div class="relative mb-stack-sm group">
+<img alt="Group Avatar" class="w-24 h-24 rounded-full object-cover shadow-sm group-hover:scale-105 transition-transform duration-200 ease-out" data-alt="Abstract 3d geometric shapes in deep blues and slate grays, minimal corporate aesthetic, soft lighting, 4k resolution, high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSPCKjpTQtDVn9FQQ9AEdk4eICTuj9a8J49vYlJWBi8rw8d6I21cHSMnBQ-quHL8rwcXnfmSqPAB6jm_eG0jCdRYuiHssmfICjvkesyLAzvdwVVOB-G4Z9uSjaiWV6b4KB_cWKW5ffNg-_gD6IsNtnBUIMkhiqpwTddfS3BDJO_Z90U9OJHfV9izzMm1lRvAwMITq7aABhXlVGaNEp_oS6atjU5ZqjAlKv88gFlji7NtaNp1zevavm"/>
+<div class="absolute bottom-0 right-0 w-6 h-6 bg-surface rounded-full flex items-center justify-center shadow-sm cursor-pointer hover:bg-surface-container transition-colors duration-200">
+<span class="material-symbols-outlined text-[14px] text-on-surface">edit</span>
+</div>
+</div>
+<h1 class="font-headline-sm text-headline-sm text-on-surface mb-1 text-center">Project Phoenix Alpha</h1>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">lock</span>
+      End-to-end encrypted
+    </p>
+</div>
+<!-- Actions Row -->
+<div class="flex flex-row justify-center gap-4 py-stack-md px-gutter bg-surface">
+<button aria-label="Audio Call" class="flex flex-col items-center gap-2 px-4 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 flex-1 min-w-0">
+<span class="material-symbols-outlined text-on-surface text-[24px]">call</span>
+<span class="font-label-caps text-label-caps text-on-surface truncate w-full text-center">Call</span>
+</button>
+<button aria-label="Video Call" class="flex flex-col items-center gap-2 px-4 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 flex-1 min-w-0">
+<span class="material-symbols-outlined text-on-surface text-[24px]">videocam</span>
+<span class="font-label-caps text-label-caps text-on-surface truncate w-full text-center">Video</span>
+</button>
+<button aria-label="Search Messages" class="flex flex-col items-center gap-2 px-4 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 flex-1 min-w-0">
+<span class="material-symbols-outlined text-on-surface text-[24px]">search</span>
+<span class="font-label-caps text-label-caps text-on-surface truncate w-full text-center">Search</span>
+</button>
+</div>
+<div class="h-2 w-full bg-surface-container-low"></div>
+<!-- Settings Links -->
+<div class="flex flex-col bg-surface py-2">
+<button class="flex items-center justify-between px-gutter py-4 hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface">notifications</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface">Mute Notifications</span>
+</div>
+<div class="w-12 h-6 rounded-full bg-surface-container-high relative cursor-pointer" onclick="this.classList.toggle('bg-primary'); this.querySelector('div').classList.toggle('translate-x-6'); this.querySelector('div').classList.toggle('bg-on-primary');">
+<div class="w-5 h-5 bg-on-surface-variant rounded-full absolute top-[2px] left-[2px] transition-transform duration-200 ease-out shadow-sm"></div>
+</div>
+</button>
+<button class="flex items-center justify-between px-gutter py-4 hover:bg-surface-container-low transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface">image</span>
+</div>
+<span class="font-body-lg text-body-lg text-on-surface">Media, Links, and Docs</span>
+</div>
+<div class="flex items-center text-on-surface-variant">
+<span class="font-body-md text-body-md mr-2">142</span>
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</div>
+</button>
+</div>
+<div class="h-2 w-full bg-surface-container-low"></div>
+<!-- Member List -->
+<div class="flex flex-col bg-surface flex-1">
+<div class="flex items-center justify-between px-gutter pt-stack-md pb-2">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant">12 Members</h2>
+<button class="font-label-caps text-label-caps text-primary hover:text-primary-fixed-dim transition-colors duration-200 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person_add</span>
+        Add
+      </button>
+</div>
+<!-- Member Item -->
+<div class="flex items-center px-gutter py-3 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer">
+<img alt="Elena Rostova" class="w-12 h-12 rounded-full object-cover shadow-sm mr-4" data-alt="Portrait of a professional woman with dark hair in a slate gray blazer, soft studio lighting, corporate aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmqw8s61lVuxlG1qqrwK0ApoIwee6IvXyZZnqU1HLntQ3DKVJK3mzU19nBFNSSXLdTfwY2V24VgK3hKLrz2H9J3Su8YgZKLmLq9-HlSM8n57u3_ILXVbDkVhHpM5AmAeU-RSC7aTWLdL75gorcMiOLx8EtkSmPzP424QF5nBSjtpAt4mJmC9MA3ioxfdMsZAr5AmhVac6dkOgXvoaPVcSwPwx9z1_xPNUQQhasrVWYmjn2e93BOoea"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-body-lg text-body-lg text-on-surface truncate">Elena Rostova</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">elena.r@acmecorp.com</p>
+</div>
+<span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container rounded-full font-label-caps text-label-caps ml-2 flex-shrink-0">Founder</span>
+</div>
+<!-- Member Item -->
+<div class="flex items-center px-gutter py-3 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer">
+<img alt="Marcus Chen" class="w-12 h-12 rounded-full object-cover shadow-sm mr-4" data-alt="Portrait of a man with short gray hair and glasses wearing a dark minimalist sweater, soft rim lighting, corporate aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX87AMLsO6P_67QAVQAljcrxLOI0RP6AVZKQW8ZEqyq0pDPMCTQubPdMKTyMzgIYkDRmASWwQANBa3uSA22UydB8qyhcxnviIfUcKObUGleGUQF2J-MpndhFJQbWpvbgaRbB825SeQUv9c_M2Ytbx_A6N1CprkhHrI89AYjMIIjPIihKxTbLoEAW8hdEOw8D6rZ5UyZ7QpwITD8u-TgWtuZnnZSCk9zhUx791YqLwqMVeL-0CkmPfB"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-body-lg text-body-lg text-on-surface truncate">Marcus Chen</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">m.chen@acmecorp.com</p>
+</div>
+<span class="px-2 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-caps text-label-caps ml-2 flex-shrink-0">Admin</span>
+</div>
+<!-- Member Item -->
+<div class="flex items-center px-gutter py-3 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm mr-4 font-headline-sm text-headline-sm">
+        SJ
+      </div>
+<div class="flex-1 min-w-0">
+<h3 class="font-body-lg text-body-lg text-on-surface truncate">Sarah Jenkins</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">Client Representative</p>
+</div>
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-caps text-label-caps ml-2 flex-shrink-0">Client</span>
+</div>
+<!-- Member Item (You) -->
+<div class="flex items-center px-gutter py-3 hover:bg-surface-container-low transition-colors duration-200 cursor-pointer">
+<img alt="You" class="w-12 h-12 rounded-full object-cover shadow-sm mr-4" data-alt="Portrait of a professional person in a minimalist dark setting, soft lighting, corporate aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnaxEZ5ARTSlrlMRoZjSljDLsS-TYYUAr__e3m_1U2eNLCi3jfMx92Px_iOUbHa3kX2Mlby48ohNSthGXCqR3MnZBKoNBHfYCdsYxyRbqGYIPkbRBfEd_Tvu-L3DZdan6qFo5bJ3uIGRFvXKQC0txpbmq3950ibY0GOJHboHoZwu6-X9ufHhNGd0M9Iwy36trtwjTzRao_6QIfTPeQJxtHuafezdAsAYt96-2nU6x8xO8YFZwgWm4X"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-body-lg text-body-lg text-on-surface truncate">You</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate">UX Lead</p>
+</div>
+<span class="px-2 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-caps text-label-caps ml-2 flex-shrink-0">Team</span>
+</div>
+<button class="font-body-md text-body-md text-on-surface-variant py-4 hover:text-on-surface transition-colors duration-200">
+      View all 12 members
+    </button>
+</div>
+<div class="h-2 w-full bg-surface-container-low"></div>
+<!-- Danger Zone -->
+<div class="flex flex-col bg-surface pt-2 pb-8">
+<button class="flex items-center gap-4 px-gutter py-4 hover:bg-error-container transition-colors duration-200 group">
+<div class="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center group-hover:bg-error/20 transition-colors duration-200">
+<span class="material-symbols-outlined text-error">logout</span>
+</div>
+<span class="font-body-lg text-body-lg text-error">Leave Group</span>
+</button>
+<button class="flex items-center gap-4 px-gutter py-4 hover:bg-error-container transition-colors duration-200 group">
+<div class="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center group-hover:bg-error/20 transition-colors duration-200">
+<span class="material-symbols-outlined text-error">report</span>
+</div>
+<span class="font-body-lg text-body-lg text-error">Report Group</span>
+</button>
+</div>
+<!-- Footer Info -->
+<div class="px-gutter py-6 text-center">
+<span class="material-symbols-outlined text-on-surface-variant/50 text-[32px] mb-2">shield_lock</span>
+<p class="font-label-caps text-label-caps text-on-surface-variant/70 max-w-[280px] mx-auto leading-relaxed">
+      Messages and calls are end-to-end encrypted. No one outside of this chat, not even the server, can read or listen to them.
+    </p>
+</div>
+</div></main></body></html>

@@ -1,0 +1,210 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  
+  --color-text-muted: var(--text-muted);
+  --color-text-subtle: var(--text-subtle);
+
+  --color-bubble-founder: var(--bubble-founder);
+  --color-bubble-founder-text: var(--bubble-founder-text);
+  --color-bubble-user: var(--bubble-user);
+  --color-bubble-user-text: var(--bubble-user-text);
+  --color-bubble-other: var(--bubble-other);
+  --color-bubble-other-text: var(--bubble-other-text);
+
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  
+  --surface: #ffffff;
+  --surface-hover: #f1f5f9;
+  
+  --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  
+  --text-muted: #64748b;
+  --text-subtle: #94a3b8;
+
+  --bubble-founder: #0f172a;
+  --bubble-founder-text: #ffffff;
+  
+  --bubble-user: #2563eb;
+  --bubble-user-text: #ffffff;
+  
+  --bubble-other: #f1f5f9;
+  --bubble-other-text: #0f172a;
+}
+
+.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
+  
+  --surface: #0f172a;
+  --surface-hover: #1e293b;
+  
+  --border: #334155;
+  --border-subtle: #1e293b;
+  
+  --text-muted: #94a3b8;
+  --text-subtle: #64748b;
+
+  --bubble-founder: #f8fafc;
+  --bubble-founder-text: #020617;
+  
+  --bubble-user: #3b82f6;
+  --bubble-user-text: #ffffff;
+  
+  --bubble-other: #1e293b;
+  --bubble-other-text: #f8fafc;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Chat Background - Vibrant & Fast-Changing Mesh Gradient */
+.chat-pattern-bg {
+  background-color: #e2e8f0;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(240, 100%, 70%, 0.7) 0px, transparent 35%),
+    radial-gradient(at 100% 0%, hsla(280, 100%, 70%, 0.7) 0px, transparent 35%),
+    radial-gradient(at 0% 100%, hsla(160, 50%, 40%, 0.6) 0px, transparent 40%),
+    radial-gradient(at 100% 100%, hsla(45, 100%, 65%, 0.7) 0px, transparent 35%),
+    radial-gradient(at 50% 50%, hsla(0, 80%, 65%, 0.7) 0px, transparent 40%),
+    radial-gradient(at 50% 0%, hsla(260, 100%, 70%, 0.7) 0px, transparent 35%),
+    radial-gradient(at 0% 50%, hsla(220, 100%, 70%, 0.7) 0px, transparent 35%);
+  background-attachment: fixed;
+}
+.dark .chat-pattern-bg {
+  background-color: #020617;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(240, 100%, 40%, 0.8) 0px, transparent 35%),
+    radial-gradient(at 100% 0%, hsla(280, 100%, 40%, 0.8) 0px, transparent 35%),
+    radial-gradient(at 0% 100%, hsla(0, 0%, 5%, 0.9) 0px, transparent 40%),
+    radial-gradient(at 100% 100%, hsla(45, 100%, 35%, 0.8) 0px, transparent 35%),
+    radial-gradient(at 50% 50%, hsla(0, 80%, 40%, 0.8) 0px, transparent 40%),
+    radial-gradient(at 50% 0%, hsla(260, 100%, 40%, 0.8) 0px, transparent 35%),
+    radial-gradient(at 0% 50%, hsla(220, 100%, 40%, 0.8) 0px, transparent 35%);
+  background-attachment: fixed;
+}
+
+/* Premium Optimized Glassmorphism for Messages */
+.message-glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 4px 24px -1px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 0 20px 2px rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  /* Hardware acceleration for blur */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Glossy highlight line on top edge */
+.message-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  opacity: 0.8;
+  z-index: 1;
+}
+
+/* Glossy highlight line on left edge */
+.message-glass::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), transparent, rgba(255, 255, 255, 0.2));
+  opacity: 0.8;
+  z-index: 1;
+}
+
+/* Dark mode premium glass */
+.dark .message-glass {
+  background: rgba(15, 23, 42, 0.4); /* Slate 900 base */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 4px 24px -1px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02),
+    inset 0 0 20px 2px rgba(255, 255, 255, 0.03);
+}
+
+.dark .message-glass::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.dark .message-glass::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent, rgba(255, 255, 255, 0.05));
+}
+
+/* Content needs to be above pseudo elements */
+.message-glass > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

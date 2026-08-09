@@ -1,0 +1,111 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isFounderEmail() {
+      return isAuthenticated() && request.auth.token.email == "obsidianhaadi@gmail.com";
+    }
+
+    function isFounder() {
+      return isAuthenticated() 
+             && isFounderEmail()
+             && getUserData().role == "FOUNDER";
+    }
+
+    function isConversationMember(convId) {
+      return exists(/databases/$(database)/documents/conversations/$(convId)) 
+             && request.auth.uid in get(/databases/$(database)/documents/conversations/$(convId)).data.members;
+    }
+
+    // USERS COLLECTION
+    match /users/{uid} {
+      // Anyone authenticated can read user profiles (needed for chats)
+      allow read: if isAuthenticated();
+      
+      // Users can only create their own profile during onboarding, or Founder can auto-provision
+      allow create: if isOwner(uid) && (
+                      (request.resource.data.keys().hasAll(['uid', 'email', 'displayName', 'username', 'role', 'age', 'avatarUrl', 'createdAt'])
+                       && request.resource.data.role in ['USER', 'CLIENT', 'TEAM']
+                       && request.resource.data.age >= 13)
+                      ||
+                      (isFounderEmail() && request.resource.data.role == 'FOUNDER')
+                    );
+      
+      // Users can update their own profile, but cannot escalate privileges
+      allow update: if isOwner(uid)
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'username']))
+                    || isFounder(); // Founder can update anyone
+                    
+      // Only Founder can delete accounts
+      allow delete: if isFounder();
+      
+      // User Contacts Subcollection
+      match /contacts/{contactId} {
+        allow read: if isOwner(uid) || isFounder();
+        allow write: if isOwner(uid) || (isAuthenticated() && request.auth.uid == contactId) || isFounder();
+      }
+    }
+    
+    // USERNAMES COLLECTION (For atomic reservation)
+    match /usernames/{username} {
+      allow read: if isAuthenticated();
+      
+      // Can create if it doesn't exist and matches the user's uid, or if founder auto-provisioning
+      allow create: if (isOwner(request.resource.data.uid)
+                        && !exists(/databases/$(database)/documents/usernames/$(username)))
+                    || isFounderEmail();
+      
+      allow delete: if isOwner(resource.data.uid) || isFounder();
+      allow update: if false; // Usernames are immutable once reserved
+    }
+
+    // CONVERSATIONS COLLECTION
+    match /conversations/{conversationId} {
+      allow read: if isAuthenticated() && (resource == null || request.auth.uid in resource.data.members || isFounderEmail());
+      allow create: if isAuthenticated() && request.auth.uid in request.resource.data.members;
+      allow update: if isAuthenticated() && (request.auth.uid in resource.data.members || isFounder());
+      allow delete: if isFounder() || (isAuthenticated() && request.auth.uid in resource.data.admins);
+      
+      // Messages Subcollection
+      match /messages/{messageId} {
+        allow read: if isAuthenticated() && (isConversationMember(conversationId) || isFounderEmail());
+        
+        allow create: if isAuthenticated() 
+                      && isConversationMember(conversationId)
+                      && request.resource.data.senderId == request.auth.uid;
+                      
+        // Only Founder can delete messages, or user can update their own message states
+        allow update: if isFounderEmail() 
+                      || (request.auth.uid == resource.data.senderId && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['edited', 'ciphertext', 'showEditedLabel', 'deleted', 'deletedBy']))
+                      || (isConversationMember(conversationId) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deletedBy'])); // Anyone can delete for themselves
+                      
+        allow delete: if isFounderEmail();
+      }
+      
+      // Typing Subcollection
+      match /typing/{userId} {
+        allow read: if isAuthenticated() && (isConversationMember(conversationId) || isFounderEmail());
+        allow write: if isAuthenticated() && request.auth.uid == userId && isConversationMember(conversationId);
+      }
+    }
+    
+    // USER CHAT SUMMARIES
+    match /userChats/{uid}/chats/{chatId} {
+      allow read: if isOwner(uid) || isFounder();
+      allow write: if isOwner(uid) || isFounder() || isConversationMember(chatId);
+    }
+  }
+}
