@@ -10,6 +10,7 @@ interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   loading: boolean;
+  redirectError: string | null;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -21,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [redirectError, setRedirectError] = useState<string | null>(null);
 
   useEffect(() => {
     let unsubscribeProfile: () => void;
@@ -28,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for redirect result errors (e.g. user cancelled on mobile)
     getRedirectResult(auth).catch((error) => {
       console.error("Error from redirect sign in", error);
+      setRedirectError(`Redirect Error (${error.code}): ${error.message}`);
     });
 
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
@@ -60,26 +63,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signInWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({
-        prompt: "select_account"
-      });
-      
-      // Use redirect on mobile or installed PWA to avoid popup blockers
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
-      
-      if (isMobile || isStandalone) {
-        await signInWithRedirect(auth, provider);
-      } else {
-        await signInWithPopup(auth, provider);
-      }
-    } catch (error) {
-      console.error("Error signing in with Google", error);
-      throw error;
-    }
+  const signInWithGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: "select_account"
+    });
+    // ALWAYS use popup. Redirect fails on iOS Safari due to ITP (cross-site tracking prevention).
+    return signInWithPopup(auth, provider);
   };
 
   const signInWithEmail = async (email: string, password: string) => {
@@ -101,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signInWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, profile, loading, redirectError, signInWithGoogle, signInWithEmail, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -4,24 +4,26 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export function GoogleSignIn({ text = "Continue with Google" }: { text?: string }) {
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, redirectError } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
   const handleSignIn = async () => {
     try {
+      // VERY IMPORTANT: Do not set state BEFORE calling signInWithGoogle, 
+      // otherwise mobile Safari/Chrome will block the popup because it loses the trusted click context.
+      const signInPromise = signInWithGoogle();
       setIsLoading(true);
       setError(null);
-      await signInWithGoogle();
+      await signInPromise;
     } catch (err: any) {
       if (err.code === "auth/popup-closed-by-user") {
         setError("Sign-in was cancelled.");
       } else if (err.code === "auth/popup-blocked") {
         setError("Sign-in popup was blocked by your browser. Please allow popups for this site.");
       } else {
-        setError("An error occurred during sign in. Please try again.");
+        setError(`Error (${err.code}): ${err.message}`);
       }
-    } finally {
       setIsLoading(false);
     }
   };
@@ -42,9 +44,9 @@ export function GoogleSignIn({ text = "Continue with Google" }: { text?: string 
         <span>{isLoading ? "Please wait..." : text}</span>
       </button>
 
-      {error && (
+      {(error || redirectError) && (
         <p className="mt-4 text-sm text-red-500 max-w-sm text-center bg-red-50 p-3 rounded-lg mx-auto border border-red-100">
-          {error}
+          {error || redirectError}
         </p>
       )}
     </div>
